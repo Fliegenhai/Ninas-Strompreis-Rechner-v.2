@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ninas Strompreis-Rechner</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f2f2f7;margin:0;padding:16px;color:#111}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h1{text-align:center;font-size:1.6rem}
+h2{font-size:1.1rem;margin-top:0;color:#0a7a3d}
+label{display:block;font-size:.9rem;margin-top:10px}
+input{width:100%;padding:12px;font-size:1rem;border:1px solid #ccc;border-radius:10px;box-sizing:border-box}
+.result{font-size:1.05rem;line-height:1.7}
+strong{color:#0a7a3d}
+</style>
+</head>
+<body>
+<h1>🔋 Ninas Strompreis‑Rechner</h1>
+
+<div class="card">
+<h2>🏠 Festinstallation</h2>
+<label>Monatlicher Grundpreis (€)</label>
+<input id="g1" type="number" step="0.01" value="0">
+<label>Preis pro kWh (€)</label>
+<input id="p1" type="number" step="0.001" value="0.35">
+</div>
+
+<div class="card">
+<h2>💳 Ladekarte</h2>
+<label>Monatlicher Kartenpreis (€)</label>
+<input id="g2" type="number" step="0.01" value="0">
+<label>Preis pro kWh (€)</label>
+<input id="p2" type="number" step="0.001" value="0.49">
+</div>
+
+<div class="card">
+<h2>🚗 Fahrzeug</h2>
+<label>Verbrauch (kWh / 100 km)</label>
+<input id="v" type="number" step="0.1" value="18">
+<label>Kilometer pro Monat</label>
+<input id="km" type="number" step="1" value="1000">
+</div>
+
+<div class="card result">
+<div>Zuhause: <strong id="zuhause">0 €</strong></div>
+<div>Ladekarte: <strong id="karte">0 €</strong></div>
+<div>Differenz: <strong id="diff">0 €</strong></div>
+</div>
+
+<script>
+const ids=["g1","p1","g2","p2","v","km"];
+ids.forEach(id=>{
+ let e=document.getElementById(id);
+ let s=localStorage.getItem(id);
+ if(s!==null)e.value=s;
+ e.addEventListener("input",()=>{
+   localStorage.setItem(id,e.value);
+   calc();
+ });
+});
+function euro(x){return x.toLocaleString("de-DE",{style:"currency",currency:"EUR"});}
+function calc(){
+ let g1=+g1El.value,p1=+p1El.value,g2=+g2El.value,p2=+p2El.value,v=+vEl.value,km=+kmEl.value;
+ let kwh=km*v/100;
+ let c1=g1+kwh*p1;
+ let c2=g2+kwh*p2;
+ zuhause.textContent=euro(c1);
+ karte.textContent=euro(c2);
+ let d=c2-c1;
+ diff.textContent=(d>=0?"+ ":"- ")+euro(Math.abs(d));
+}
+const g1El=g1,p1El=p1,g2El=g2,p2El=p2,vEl=v,kmEl=km;
+calc();
+</script>
+</body>
+</html>
